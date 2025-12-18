@@ -1,5 +1,6 @@
 import os
 import json
+import random
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
@@ -78,6 +79,23 @@ async def on_ready():
 @bot.command(name='ping')
 async def ping(ctx):
     await ctx.send('pong')
+
+@bot.command(name='roastme')
+async def roastme(ctx):
+    insults = [
+        "You're like a cloud. When you disappear, it's a beautiful day.",
+        "I'd roast you, but my mom told me not to burn trash.",
+        "You have something on your chin... no, the 3rd one down.",
+        "I’m not saying I hate you, but I would unplug your life support to charge my phone.",
+        "You’re the reason the gene pool needs a lifeguard.",
+        "If I wanted to kill myself, I’d climb your ego and jump to your IQ.",
+        "You're proof that evolution can go in reverse.",
+        "I'd give you a nasty look, but you've already got one.",
+        "You're not the dumbest person in the world, but you better hope they don't die.",
+        "Some cause happiness wherever they go; others whenever they go."
+    ]
+    roast = random.choice(insults)
+    await ctx.send(f"{ctx.author.mention} {roast}")
 
 if __name__ == '__main__':
     if not TOKEN or TOKEN == 'your_token_here':

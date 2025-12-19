@@ -87,12 +87,12 @@ async def roast(ctx, member: discord.Member = None, *, context: str = None):
             prompt = f"Roast {member.name}. Specifically roast them for this reason: '{context}'. Be sarcastic and rude. Keep it under 2 sentences."
         else:
             # If you didn't provide ammo (Generic roast):
-            prompt = f"Roast {member.name}. They are a user on a Discord server. Be sarcastic, funny, and lighthearted. Keep it under 2 sentences."
+            prompt = f"Roast {member.name}. They are a user on a Discord server. Be as ignorant, rude and mean as possible. Make fun of looks, body size, and other things that people are sensitive about. Keep it under 2 sentences."
         
         try:
             # 4. Send to AI
             response = ollama.chat(model=AI_MODEL, messages=[
-                {'role': 'system', 'content': 'You are a rude and sarcastic comedian.'},
+                {'role': 'system', 'content': 'You are as ignorant, rude and mean as possible. Make fun of looks, body size, and other things that people are sensitive about.'},
                 {'role': 'user', 'content': prompt},
             ])
             

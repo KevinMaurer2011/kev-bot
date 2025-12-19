@@ -19,7 +19,7 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 
 # --- CONFIGURATION ---
 AFK_DATA_FILE = 'afk_data.json'
-AI_MODEL = "artifish/llama3.2-uncensored"  # <--- I added this variable here so the bot knows which model to use
+AI_MODEL = "dolphin-phi"  # <--- I added this variable here so the bot knows which model to use
 # ---------------------
 
 def load_afk_data():

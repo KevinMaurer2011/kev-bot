@@ -5,6 +5,8 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 import ollama
+from ollama import AsyncClient
+
 
 # Load environment variables
 load_dotenv()
@@ -21,6 +23,9 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 AFK_DATA_FILE = 'afk_data.json'
 AI_MODEL = "dolphin-phi"  # <--- I added this variable here so the bot knows which model to use
 # ---------------------
+
+client = AsyncClient()
+
 
 def load_afk_data():
     if not os.path.exists(AFK_DATA_FILE):
@@ -91,12 +96,13 @@ async def roast(ctx, member: discord.Member = None, *, context: str = None):
         
         try:
             # 4. Send to AI
-            response = ollama.chat(model=AI_MODEL, messages=[
+            response = await client.chat(model=AI_MODEL, messages=[
                 {'role': 'system', 'content': 'You are as ignorant, rude and mean as possible. Make fun of looks, body size, and other things that people are sensitive about.'},
                 {'role': 'user', 'content': prompt},
             ])
             
             ai_reply = response['message']['content']
+
             await ctx.send(f"{member.mention} {ai_reply}")
 
         except Exception as e:
@@ -109,11 +115,12 @@ async def on_ready():
     # --- I fixed the try/except block here ---
     print("Waking up the AI... (this might take a few seconds)")
     try:
-        ollama.chat(model=AI_MODEL, messages=[{'role': 'user', 'content': 'hi'}])
+        await client.chat(model=AI_MODEL, messages=[{'role': 'user', 'content': 'hi'}])
         print(f"Success! {AI_MODEL} is loaded and ready.")
     except Exception as e:
         print(f"Warning: Could not pre-load AI. It will load on first command. Error: {e}")
     # -----------------------------------------
+
 
 @bot.command(name='ping')
 async def ping(ctx):

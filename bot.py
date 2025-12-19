@@ -73,14 +73,24 @@ async def afktally(ctx):
     await ctx.send(msg)
 
 @bot.command()
-async def roast(ctx, member: discord.Member = None):
+async def roast(ctx, member: discord.Member = None, *, context: str = None):
+    # 1. Handle cases where no user is tagged (roast the sender)
     if member is None:
         member = ctx.author
 
+    # 2. Show typing indicator
     async with ctx.typing():
-        prompt = f"Roast {member.name}. They are a user on a Discord server. Be sarcastic, funny, and lighthearted. Keep it under 2 sentences."
+        
+        # 3. Build the prompt dynamically
+        if context:
+            # If you provided specific ammo:
+            prompt = f"Roast {member.name}. Specifically roast them for this reason: '{context}'. Be sarcastic and rude. Keep it under 2 sentences."
+        else:
+            # If you didn't provide ammo (Generic roast):
+            prompt = f"Roast {member.name}. They are a user on a Discord server. Be sarcastic, funny, and lighthearted. Keep it under 2 sentences."
         
         try:
+            # 4. Send to AI
             response = ollama.chat(model=AI_MODEL, messages=[
                 {'role': 'system', 'content': 'You are a rude and sarcastic comedian.'},
                 {'role': 'user', 'content': prompt},

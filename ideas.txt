@@ -1,0 +1,14 @@
+trivia questions / game
+virtual currency, games to bet on with, virtual stocks to invest in 
+virtual currency you get for being in voice, sending messages, reacting to messages, daily limit so jesse
+cant sit in vc all day, daily reward also
+
+The Fun Part: !choose Valorant League Overwatch. 
+The bot picks one. If anyone complains, the bot insults their indecisiveness.
+
+Generate a visual word cloud image of a user's most used words in the last month.
+random map picker for arc raiders
+arc raiders map rotations, item data etc.  ---https://metaforge.app/arc-raiders/api
+meme generator or fetcher
+get weather for zip code
+beef tracker : Idea: A playful command like !beef @user1 @user2 [reason].

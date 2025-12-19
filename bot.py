@@ -4,6 +4,7 @@ import random
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
+import ollama
 
 # Load environment variables
 load_dotenv()
@@ -16,7 +17,10 @@ intents.message_content = True
 # Create bot instance
 bot = commands.Bot(command_prefix='!', intents=intents)
 
+# --- CONFIGURATION ---
 AFK_DATA_FILE = 'afk_data.json'
+AI_MODEL = "llama3.2:3b"  # <--- I added this variable here so the bot knows which model to use
+# ---------------------
 
 def load_afk_data():
     if not os.path.exists(AFK_DATA_FILE):
@@ -35,18 +39,17 @@ def save_afk_data(data):
 async def on_voice_state_update(member, before, after):
     # Check if member moved to the AFK channel
     if after.channel and member.guild.afk_channel and after.channel == member.guild.afk_channel:
-        # Avoid counting if they were already in the AFK channel (e.g. muted/deafened update)
+        # Avoid counting if they were already in the AFK channel
         if before.channel == after.channel:
             return
 
         data = load_afk_data()
         user_id = str(member.id)
-        user_name = str(member.name) # Store name for display, though it can change
+        user_name = str(member.name)
         
         if user_id not in data:
             data[user_id] = {'count': 0, 'name': user_name}
         
-        # Update name in case it changed
         data[user_id]['name'] = user_name
         data[user_id]['count'] += 1
         
@@ -60,10 +63,7 @@ async def afktally(ctx):
         await ctx.send("No AFK stats recorded yet.")
         return
 
-    # Sort users by count (descending)
     sorted_users = sorted(data.items(), key=lambda item: item[1]['count'], reverse=True)
-    
-    # Take top 10
     top_users = sorted_users[:10]
     
     msg = "**AFK Channel Trip Tally**\n"
@@ -72,9 +72,38 @@ async def afktally(ctx):
     
     await ctx.send(msg)
 
+@bot.command()
+async def roast(ctx, member: discord.Member = None):
+    if member is None:
+        member = ctx.author
+
+    async with ctx.typing():
+        prompt = f"Roast {member.name}. They are a user on a Discord server. Be sarcastic, funny, and lighthearted. Keep it under 2 sentences."
+        
+        try:
+            response = ollama.chat(model=AI_MODEL, messages=[
+                {'role': 'system', 'content': 'You are a rude and sarcastic comedian.'},
+                {'role': 'user', 'content': prompt},
+            ])
+            
+            ai_reply = response['message']['content']
+            await ctx.send(f"{member.mention} {ai_reply}")
+
+        except Exception as e:
+            await ctx.send(f"I tried to roast them but my brain broke: {e}")
+
 @bot.event
 async def on_ready():
     print(f'{bot.user} has connected to Discord!')
+    
+    # --- I fixed the try/except block here ---
+    print("Waking up the AI... (this might take a few seconds)")
+    try:
+        ollama.chat(model=AI_MODEL, messages=[{'role': 'user', 'content': 'hi'}])
+        print(f"Success! {AI_MODEL} is loaded and ready.")
+    except Exception as e:
+        print(f"Warning: Could not pre-load AI. It will load on first command. Error: {e}")
+    # -----------------------------------------
 
 @bot.command(name='ping')
 async def ping(ctx):
